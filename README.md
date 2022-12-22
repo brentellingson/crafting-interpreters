@@ -1,3 +1,3 @@
 # crafting-interpreters
 
-Java Lox Interpreter from the book Crafting Interpreters by Robtert Nystrom
+Java Lox Interpreter from the book Crafting Interpreters by Robert Nystrom
