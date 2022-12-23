@@ -18,6 +18,14 @@ class ParserTest {
     }
 
     @Test
+    void expressionAssignment() {
+        assertAll(
+                () -> assertEquals("(= foo 1.0)", expression("foo = 1")),
+                () -> assertEquals("(= foo (= bar 1.0))", expression("foo = bar = 1"))
+        );
+    }
+
+    @Test
     void expressionEquality() {
         assertAll(
                 () -> assertEquals("(!= (== 1.0 2.0) 3.0)", expression("1 == 2 != 3")),
@@ -70,6 +78,8 @@ class ParserTest {
     @Test
     void expressionPrecedence() {
         assertAll(
+                () -> assertEquals("(= foo (== 1.0 2.0))", expression("foo = 1 == 2")),
+                () -> assertEquals("(= foo (+ (group (= bar 1.0)) 2.0))", expression("foo = (bar = 1) + 2")),
                 () -> assertEquals("(== 1.0 (< 2.0 3.0))", expression("1 == 2 < 3")),
                 () -> assertEquals("(== (< 1.0 2.0) 3.0)", expression("1 < 2 == 3")),
                 () -> assertEquals("(> 1.0 (+ 2.0 3.0))", expression("1 > 2 + 3")),
