@@ -20,28 +20,32 @@ class ParserTest {
     @Test
     void expressionEquality() {
         assertAll(
-                () -> assertEquals("(!= (== 1.0 2.0) 3.0)", expression("1 == 2 != 3"))
+                () -> assertEquals("(!= (== 1.0 2.0) 3.0)", expression("1 == 2 != 3")),
+                () -> assertEquals("(!= (== foo bar) baz)", expression("foo == bar != baz"))
         );
     }
 
     @Test
     void expressionComparison() {
         assertAll(
-                () -> assertEquals("(>= (> (<= (< 1.0 2.0) 3.0) 4.0) 5.0)", expression("1 < 2 <= 3 > 4 >= 5"))
+                () -> assertEquals("(>= (> (<= (< 1.0 2.0) 3.0) 4.0) 5.0)", expression("1 < 2 <= 3 > 4 >= 5")),
+                () -> assertEquals("(>= (> (<= (< a b) c) 4.0) 5.0)", expression("a < b <= c > 4 >= 5"))
         );
     }
 
     @Test
     void expressionTerm() {
         assertAll(
-                () -> assertEquals("(- (+ 1.0 2.0) 3.0)", expression("1 + 2 - 3"))
+                () -> assertEquals("(- (+ 1.0 2.0) 3.0)", expression("1 + 2 - 3")),
+                () -> assertEquals("(- (+ a b) c)", expression("a + b - c"))
         );
     }
 
     @Test
     void expressionFactor() {
         assertAll(
-                () -> assertEquals("(/ (* 1.0 2.0) 3.0)", expression("1 * 2 / 3"))
+                () -> assertEquals("(/ (* 1.0 2.0) 3.0)", expression("1 * 2 / 3")),
+                () -> assertEquals("(/ (* x y) z)", expression("x * y / z"))
         );
     }
 

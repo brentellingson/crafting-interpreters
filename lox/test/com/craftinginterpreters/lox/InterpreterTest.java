@@ -7,7 +7,8 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InterpreterTest {
     private static Object evaluate(String source) {
@@ -21,23 +22,6 @@ class InterpreterTest {
         Object result = interpreter.evaluate(expression);
 
         return result;
-    }
-
-    private static String execute(String source) {
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
-
-        Parser parser = new Parser(tokens);
-        Stmt statement = parser.statement();
-
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
-            Interpreter interpreter = new Interpreter(ps);
-            interpreter.execute(statement);
-        }
-
-        return baos.toString(StandardCharsets.UTF_8);
     }
 
     private static String intepret(String source) {
@@ -94,12 +78,9 @@ class InterpreterTest {
     }
 
     @Test
-    void executePrint() {
-        assertEquals("3\r\n", execute("print 1 + 2;"));
-    }
-
-    @Test
     void interpret() {
-        assertEquals("3\r\ntrue\r\n", intepret("print 1 + 2; print 1 + 2 == 3;"));
+        assertAll(
+                () -> assertEquals("3\r\ntrue\r\n", intepret("print 1 + 2; print 1 + 2 == 3;"))
+        );
     }
 }
