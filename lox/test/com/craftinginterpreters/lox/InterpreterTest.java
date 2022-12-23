@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,24 +25,7 @@ class InterpreterTest {
         return result;
     }
 
-    private static String execute(String source) {
-        Scanner scanner = new Scanner(source);
-        List<Token> tokens = scanner.scanTokens();
-
-        Parser parser = new Parser(tokens);
-        Stmt statement = parser.statement();
-
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (PrintStream ps = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
-            Interpreter interpreter = new Interpreter(ps);
-            interpreter.execute(statement);
-        }
-
-        return baos.toString(StandardCharsets.UTF_8);
-    }
-
-    private static String intepret(String source) {
+    private static String interpret(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
@@ -54,6 +39,11 @@ class InterpreterTest {
         }
 
         return baos.toString(StandardCharsets.UTF_8);
+    }
+
+    private static void testInterpret(String source, String... expected) {
+        List<String> actual = Arrays.stream(interpret(source).split("\\r?\\n")).map(s -> s.trim()).collect(Collectors.toList());
+        assertIterableEquals(Arrays.asList(expected), actual);
     }
 
     @Test
@@ -94,12 +84,30 @@ class InterpreterTest {
     }
 
     @Test
-    void executePrint() {
-        assertEquals("3\r\n", execute("print 1 + 2;"));
+    void interpretPrint() {
+        assertAll(
+                () -> testInterpret("print 1 + 2;", "3"),
+                () -> testInterpret("print 1 + 2; print 1 + 2 == 3;", "3", "true")
+        );
     }
 
     @Test
-    void interpret() {
-        assertEquals("3\r\ntrue\r\n", intepret("print 1 + 2; print 1 + 2 == 3;"));
+    void interpretVar() {
+        assertAll(
+                () -> testInterpret("var foo = 1; print foo;", "1"),
+                () -> testInterpret("var foo = 1; print foo + 2;", "3"),
+                () -> testInterpret("var foo = 1; var bar = 2 + foo; print bar + 3;", "6")
+        );
+    }
+
+    void interpretAssign() {
+        assertAll(
+                () -> testInterpret("var foo = 1; foo = 2; print foo;", "2"),
+                () -> testInterpret("var foo = 1; foo = foo + 2; print foo;", "3"),
+                () -> testInterpret("var foo = 1; var bar = 2; foo = (bar = 3) + 4; print foo; print bar", "7", "3"),
+                () -> testInterpret("var foo = \"apple\"; foo = \"banana\"; print foo;", "banana"),
+                () -> testInterpret("var foo = \"apple\"; foo = foo + \"banana\"; print foo;", "applebanana"),
+                () -> testInterpret("var foo = \"apple\"; var bar = \"banana\"; foo = !(bar = false); print foo; print bar", "true", "false")
+        );
     }
 }
