@@ -100,14 +100,23 @@ class InterpreterTest {
         );
     }
 
+    @Test
     void interpretAssign() {
         assertAll(
                 () -> testInterpret("var foo = 1; foo = 2; print foo;", "2"),
                 () -> testInterpret("var foo = 1; foo = foo + 2; print foo;", "3"),
-                () -> testInterpret("var foo = 1; var bar = 2; foo = (bar = 3) + 4; print foo; print bar", "7", "3"),
+                () -> testInterpret("var foo = 1; var bar = 2; foo = (bar = 3) + 4; print foo; print bar;", "7", "3"),
                 () -> testInterpret("var foo = \"apple\"; foo = \"banana\"; print foo;", "banana"),
                 () -> testInterpret("var foo = \"apple\"; foo = foo + \"banana\"; print foo;", "applebanana"),
-                () -> testInterpret("var foo = \"apple\"; var bar = \"banana\"; foo = !(bar = false); print foo; print bar", "true", "false")
+                () -> testInterpret("var foo = \"apple\"; var bar = \"banana\"; foo = !(bar = false); print foo; print bar;", "true", "false")
+        );
+    }
+
+    @Test
+    void interpretScope() {
+        assertAll(
+                () -> testInterpret("var foo = 1; { foo = 2; } print foo;", "2"),
+                () -> testInterpret("var foo = 1; var bar = 2; { var foo = 3; print foo; print bar; } print foo; print bar;", "3", "2", "1", "2")
         );
     }
 }

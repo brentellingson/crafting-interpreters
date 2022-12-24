@@ -18,19 +18,20 @@ class Parser {
     List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {
-            try {
                 statements.add(declaration());
-            } catch (ParseError error) {
-                synchronize();
-            }
         }
 
         return statements;
     }
 
     private Stmt declaration() {
-        if (match(VAR)) return varDeclaration();
-        return statement();
+        try {
+            if (match(VAR)) return varDeclaration();
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
     }
 
     private Stmt varDeclaration() {
@@ -46,7 +47,7 @@ class Parser {
 
     Stmt statement() {
         if (match(PRINT)) return printStatement();
-
+        if (match(LEFT_BRACE)) return blockStatement();
         return expressionStatement();
     }
 
@@ -60,6 +61,16 @@ class Parser {
         Expr expression = expression();
         consume(SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(expression);
+    }
+
+    private Stmt blockStatement() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        consume(RIGHT_BRACE, "Expect '}' after block.");
+        return new Stmt.BlocK(statements);
     }
 
     Expr expression() {
