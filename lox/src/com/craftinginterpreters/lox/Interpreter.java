@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private final Environment environment = new Environment();
+    private Environment environment = new Environment();
     private final PrintStream out;
 
     Interpreter(PrintStream out) {
@@ -27,6 +27,20 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     Void execute(Stmt stmt) {
         return stmt.accept(this);
+    }
+
+    @Override
+    public Void visitBlocKStmt(Stmt.BlocK stmt) {
+        Environment previous = this.environment;
+        try {
+            this.environment = new Environment(previous);
+            for (Stmt statement : stmt.statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
+        return null;
     }
 
     @Override

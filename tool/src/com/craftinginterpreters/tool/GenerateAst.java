@@ -25,6 +25,7 @@ public class GenerateAst {
         ));
 
         defineAst(outputDir, "Stmt", Arrays.asList(
+                "BlocK      : List<Stmt> statements",
                 "Expression : Expr expression",
                 "Print      : Expr expression",
                 "Var        : Token name, Expr initializer"
@@ -38,6 +39,8 @@ public class GenerateAst {
         PrintWriter writer = new PrintWriter(path, StandardCharsets.UTF_8);
 
         writer.println("package com.craftinginterpreters.lox;");
+        writer.println();
+        writer.println("import java.util.List;");
         writer.println();
         writer.println("abstract class " + baseName + " {");
 
@@ -79,7 +82,7 @@ public class GenerateAst {
         writer.println();
 
         // The constructor.
-        writer.println("        " + className + "(" + fieldList + ") { ");
+        writer.println("        " + className + "(" + fieldList + ") {");
         for (String field : fields) {
             String name = field.split(" ")[1];
             writer.println("            this." + name + " = " + name + ";");
