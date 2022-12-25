@@ -26,6 +26,22 @@ class ParserTest {
     }
 
     @Test
+    void expressionOr() {
+        assertAll(
+                () -> assertEquals("(or (or true false) nil)", expression("true or false or nil")),
+                () -> assertEquals("(or (or a b) c)", expression("a or b or c"))
+        );
+    }
+
+    @Test
+    void expressionAnd() {
+        assertAll(
+                () -> assertEquals("(and (and true false) nil)", expression("true and false and nil")),
+                () -> assertEquals("(and (and a b) c)", expression("a and b and c"))
+        );
+    }
+
+    @Test
     void expressionEquality() {
         assertAll(
                 () -> assertEquals("(!= (== 1.0 2.0) 3.0)", expression("1 == 2 != 3")),
@@ -80,6 +96,11 @@ class ParserTest {
         assertAll(
                 () -> assertEquals("(= foo (== 1.0 2.0))", expression("foo = 1 == 2")),
                 () -> assertEquals("(= foo (+ (group (= bar 1.0)) 2.0))", expression("foo = (bar = 1) + 2")),
+                () -> assertEquals("(= foo (or true false))", expression("foo = true or false")),
+                () -> assertEquals("(or (and a b) c)", expression("a and b or c")),
+                () -> assertEquals("(or a (and b c))", expression("a or b and c")),
+                () -> assertEquals("(and (== a b) c)", expression("a == b and c")),
+                () -> assertEquals("(and a (== b c))", expression("a and b == c")),
                 () -> assertEquals("(== 1.0 (< 2.0 3.0))", expression("1 == 2 < 3")),
                 () -> assertEquals("(== (< 1.0 2.0) 3.0)", expression("1 < 2 == 3")),
                 () -> assertEquals("(> 1.0 (+ 2.0 3.0))", expression("1 > 2 + 3")),

@@ -16,6 +16,11 @@ class AstInlinePrinter implements Expr.Visitor<String> {
     }
 
     @Override
+    public String visitLogicalExpr(Expr.Logical expr) {
+        return print(expr.left) + " " + expr.operator.lexeme + " " + print(expr.right);
+    }
+
+    @Override
     public String visitGroupingExpr(Expr.Grouping expr) {
         return "( " + print(expr.expression) + " )";
     }
