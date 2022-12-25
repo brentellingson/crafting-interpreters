@@ -119,4 +119,23 @@ class InterpreterTest {
                 () -> testInterpret("var foo = 1; var bar = 2; { var foo = 3; print foo; print bar; } print foo; print bar;", "3", "2", "1", "2")
         );
     }
+
+    @Test
+    void interpretIf() {
+        assertAll(
+                () -> testInterpret("if (true) print 1; else if (true) print 2; else print 3;", "1"),
+                () -> testInterpret("if (false) print 1; else if (true) print 2; else print 3;", "2"),
+                () -> testInterpret("if (false) print 1; else if (false) print 2; else print 3;", "3")
+        );
+    }
+
+    @Test
+    void interpretLogic() {
+        assertAll(
+                () -> testInterpret("print true and false or nil;", "nil"),
+                () -> testInterpret("print true or false and nil;", "true"),
+                () -> testInterpret("print 1 or 2;", "1"),
+                () -> testInterpret("print 1 and 2;", "2")
+        );
+    }
 }

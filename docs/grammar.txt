@@ -1,0 +1,44 @@
+statements:
+
+    program        : declaration* EOF;
+
+    declaration    : varDeclaration
+                   | statement ;
+
+
+    varDeclaration : "var" IDENTIFIER ( "=" expression )? ";" ;
+
+    statement      : ifStatement
+                   | printStatement
+                   | blockStatement
+                   | expressionStatement ;
+
+    ifStatement    : "if" "(" expression ")" statement ( "else" statement )? ;
+
+    printStatement : "print" expression ";" ;
+
+    expressionStatement : expression ";" ;
+
+    blockStatement : "{" declaration* "}"
+
+expressions:
+
+    expression     : assignment ;
+    assignment     : IDENTIFIER "=" assignment
+                   | logic_or ;
+    logic_or       : logic_and ( "or" logic_and )* ;
+    logic_and      : equality ( "and" equality )* ;
+    equality       : comparison ( ( "!=" | "==" ) comparison )* ;
+    comparison     : term ( ( "<" | "<=" | ">" | ">=" ) term )* ;
+    term           : factor ( "+" | "-" ) factor )* ;
+    factor         : unary ( ( "*" | "/" ) unary )* ;
+    unary          : ( "!" | "-" ) unary
+                   | primary ;
+    primary        : "true"
+                   | "false"
+                   | "nil"
+                   | NUMBER
+                   | STRING
+                   | IDENTIFIER
+                   | "(" expression ")" ;
+

@@ -1,0 +1,59 @@
+print "-- first test should return A / B --";
+if (true) {
+    print "A";
+    if (true)
+        print "B";
+    else
+        print "X";
+} else {
+    print "Y";
+    if (true)
+        print "C";
+    else
+        print "Z";
+}
+
+print "-- first test should return A / X --";
+if (true) {
+    print "A";
+    if (false)
+        print "B";
+    else
+        print "X";
+} else {
+    print "Y";
+    if (true)
+        print "C";
+    else
+        print "Z";
+}
+
+print "-- third test should return Y / C --";
+if (false) {
+    print "A";
+    if (true)
+        print "B";
+    else
+        print "X";
+} else {
+    print "Y";
+    if (true)
+        print "C";
+    else
+        print "Z";
+}
+
+print "-- fourth test should print Y / Z ";
+if (false) {
+    print "A";
+    if (true)
+        print "B";
+    else
+        print "X";
+} else {
+    print "Y";
+    if (false)
+        print "C";
+    else
+        print "Z";
+}

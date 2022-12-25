@@ -30,7 +30,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
-    public Void visitBlocKStmt(Stmt.BlocK stmt) {
+    public Void visitBlockStmt(Stmt.Block stmt) {
         Environment previous = this.environment;
         try {
             this.environment = new Environment(previous);
@@ -46,6 +46,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitIfStmt(Stmt.If stmt) {
+        if (isTruthy(evaluate(stmt.condition)))
+            return execute(stmt.thenBranch);
+        else if (stmt.elseBranch != null)
+            return execute(stmt.elseBranch);
+
         return null;
     }
 
@@ -115,6 +125,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         return null;
+    }
+
+    @Override
+    public Object visitLogicalExpr(Expr.Logical expr) {
+        Object left = evaluate(expr.left);
+        if (expr.operator.type == TokenType.OR && isTruthy(left))
+            return left;
+        if (expr.operator.type == TokenType.AND && !isTruthy(left))
+            return left;
+
+        return evaluate(expr.right);
     }
 
     @Override
