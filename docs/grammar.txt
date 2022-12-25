@@ -10,12 +10,15 @@ statements:
 
     statement      : ifStatement
                    | printStatement
+                   | whileStatement
                    | blockStatement
                    | expressionStatement ;
 
     ifStatement    : "if" "(" expression ")" statement ( "else" statement )? ;
 
     printStatement : "print" expression ";" ;
+
+    whileStatement : "while" "(" expression ")" statement ;
 
     expressionStatement : expression ";" ;
 
